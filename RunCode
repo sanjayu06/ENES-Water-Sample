@@ -4,10 +4,9 @@ void setup() {
   // put your setup code here, to run once:
   //Connect digitial pin.. to the T pin of the wifi module
   //Connect digitial pin.. to the Rx pin of the wifi module
+  
+  //// Team Name, Mission Type (WATER), Marker ID (249), Wifi Module TX Pin, Wifi Module RX Pin
   Enes100.begin("Project Kowalski", WATER, 249,);
-  //missing Rx & Tx 
-  //WATER
-  //ArUco MarkerID 249
   Serial.begin(9600);
   //define pins
   //const int trigPin = ;
