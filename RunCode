@@ -1,0 +1,31 @@
+#include "Enes100.h"
+void setup() {
+  // put your setup code here, to run once:
+  //Connect digitial pin.. to the T pin of the wifi module
+  //Connect digitial pin.. to the Rx pin of the wifi module
+  Enes100.begin("Project Kowalski", WATER, 249,);
+  //missing Rx & Tx 
+  //WATER
+  //ArUco MarkerID 249
+  Serial.begin(9600);
+  //define pins
+  //const int trigPin = ;
+  //const int echoPin = ;
+
+  //define variables
+  //long duration;
+  //int dist;
+
+  //pinMode(trigPin, OUTPUT);
+  //pinMode(echoPin, OUTPUT);
+
+
+  Enes100.println("Begin");
+  Serial.println("Begin!");
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
