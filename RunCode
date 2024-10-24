@@ -2,11 +2,11 @@
 #include "Enes100.h"
 void setup() {
   // put your setup code here, to run once:
-  //Connect digitial pin.. to the T pin of the wifi module
-  //Connect digitial pin.. to the Rx pin of the wifi module
+  //Connect digitial pin 50 to the Tx pin of the wifi module
+  //Connect digitial pin 51 to the Rx pin of the wifi module
   
   //// Team Name, Mission Type (WATER), Marker ID (249), Wifi Module TX Pin, Wifi Module RX Pin
-  Enes100.begin("Project Kowalski", WATER, 249,);
+  Enes100.begin("Project Kowalski", WATER, 249,50, 51);
   Serial.begin(9600);
   //define pins
   //const int trigPin = ;
