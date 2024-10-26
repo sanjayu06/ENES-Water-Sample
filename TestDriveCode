@@ -1,1 +1,13 @@
+//Assigning Pins Left Motor (A) 
+const int EN_A = 11;//speed
+const int IN1_A = 22; //direction
+const int IN2_A = 23; //direction
+
+//Assigning Pins Right Motor (B)
+const int EN_B = 12;//speed
+const int IN1_B = 24; //direction
+const int IN2_B = 25; //direction
+
+
+
 
