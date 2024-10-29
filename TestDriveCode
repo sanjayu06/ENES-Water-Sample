@@ -12,6 +12,11 @@ void loop(){
   
 }
 
+void moveOTV (int time, bool forward){
+  setDirection(forward, 0);
+  delay(time);
+
+}
 void setDirection(bool forward, int motors) {
   switch (motors) {
     case 0: //both motors same
