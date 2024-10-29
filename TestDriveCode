@@ -36,18 +36,17 @@ void setDirection(bool forward, int motors) {
     case 1:
       {
         if (forward) {
-          //left
-
+          //left motor
           digitalWrite(IN1_A, HIGH);
           digitalWrite(IN2_A, LOW);
           //right
           digitalWrite(IN1_B, LOW);
           digitalWrite(IN2_B, HIGH);
         } else {
-          //left
+          //left motor
           digitalWrite(IN1_A, LOW);
           digitalWrite(IN2_A, HIGH);
-          //right
+          //right motor
           digitalWrite(IN1_B, HIGH);
           digitalWrite(IN2_B, LOW);
         }
@@ -55,18 +54,17 @@ void setDirection(bool forward, int motors) {
       case 2:
         {
           if (forward) {
-            //left
-
+            //left motor
             digitalWrite(IN1_A, LOW);
             digitalWrite(IN2_A, HIGH);
-            //right
+            //right motor
             digitalWrite(IN1_B, HIGH);
             digitalWrite(IN2_B, LOW);
           } else {
-            //left
+            //left motor
             digitalWrite(IN1_A, HIGH);
             digitalWrite(IN2_A, LOW);
-            //right
+            //right motor
             digitalWrite(IN1_B, LOW);
             digitalWrite(IN2_B, HIGH);
           }
@@ -76,29 +74,7 @@ void setDirection(bool forward, int motors) {
   }
 }
 
-void setSpeed(int motor, int spd) {
-  switch (motor) {
-    case 0:
-      {
-//        for (int i = 0; i <= spd;i++) {
-          int i =spd;
-          analogWrite(EN_A, i - Atrim);
-          analogWrite(EN_B, i - Btrim);
-          delay(1);
-//        }
 
-        break;
-      }
-    case 1:
-      //Left Motor
-      analogWrite(EN_A, spd - Atrim);
-      break;
-    case 2:
-      //right motor
-      analogWrite(EN_B, spd - Btrim);
-      break;
-  }
-}
 
 
 
