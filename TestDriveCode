@@ -14,7 +14,7 @@ void loop(){
 
 void setDirection(bool forward, int motors) {
   switch (motors) {
-    case 0:
+    case 0: //both motors same
       {
         if (forward) {
           //left motor
@@ -33,7 +33,7 @@ void setDirection(bool forward, int motors) {
         }
         break;
       }
-    case 1:
+    case 1: //left turn
       {
         if (forward) {
           //left motor
@@ -51,7 +51,7 @@ void setDirection(bool forward, int motors) {
           digitalWrite(IN2_B, LOW);
         }
         break;
-      case 2:
+      case 2: //right turn
         {
           if (forward) {
             //left motor
