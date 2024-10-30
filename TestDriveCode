@@ -15,7 +15,16 @@ void loop(){
 void moveOTV (int time, bool forward){
   setDirection(forward, 0);
   delay(time);
+  stopMotors();
+}
 
+void stopMotors(){
+  //left motor
+  digitalWrite(IN1_A, LOW);
+  digitalWrite(IN2_A, LOW);
+  //right motor
+  digitalWrite(IN1_B, LOW);
+  digitalWrite(IN2_B, LOW);
 }
 void setDirection(bool forward, int motors) {
   switch (motors) {
