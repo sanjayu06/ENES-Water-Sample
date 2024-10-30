@@ -5,7 +5,6 @@
 
 
 
-
 void setup() {
     Enes100.begin("Project Kowalski", WATER, 249,50, 51);
     Tank.begin();
@@ -21,14 +20,17 @@ void setup() {
     Enes100.println("Turn 2");
     turn90Degrees(1);
     
-    Enes100.println("Turn 3");
-    turn90Degrees(1);
+    // Enes100.println("Turn 3");
+    // turn90Degrees(1);
+    
+    Enes100.println("Start Moving Towards Mission Site");
+    navigateMission();
 }
 
 void loop() {
     delay(100);
     updateCoords();
-    moveOTVTill(3.5);
+    moveOTVTillY(3.5);
     //break;
 }
 
@@ -38,8 +40,6 @@ void updateCoords()
     Enes100.print("X = "); Enes100.println(Enes100.getX());
     Enes100.print("Y = "); Enes100.println(Enes100.getY());
     Enes100.print("Theta = "); Enes100.println(Enes100.getTheta());
-    
-  
 
 }
 
@@ -81,9 +81,18 @@ void rotateOTV() {
 
 }
 
-void moveOTVTill(float distance){
+void moveOTVTillY(float distance){
     //Moves Tank till x values reach target within threshold of .3
     while(Enes100.getX() < (distance-.3) && Enes100.getX() < (distance + .5)){
+        setDirection(0, 200);
+        delay(1000);
+        //stopMotors();
+
+    }
+}
+void moveOTVTillX(float distance){
+    //Moves Tank till x values reach target within threshold of .3
+    while(Enes100.getY() < (distance-.3) && Enes100.getY() < (distance + .5)){
         setDirection(0, 200);
         delay(1000);
         //stopMotors();
@@ -120,7 +129,7 @@ void turn90Degrees(int direction){
     
     Enes100.println( target);
     
-    while (fabs(Enes100.getTheta() - target) > .3) {
+    while (fabs(Enes100.getTheta() - target) > .2) {
         updateCoords ();
         currentTheta = Enes100.getTheta();
     
@@ -129,10 +138,10 @@ void turn90Degrees(int direction){
         int speed = maxSpeed;
 
         // Adjust the speed based on the angle's proximity to zero
-        if (fabs(currentTheta-target) <  (0.3)) {
+        if (fabs(currentTheta-target) <  (0.2)) {
             //map(int x, int in_min, int in_max, int out_min, int out_max)
             
-            speed = map(fabs(currentTheta - target), 0, .3, 20, maxSpeed); 
+            speed = map(fabs(currentTheta - target), 0, .2, 20, maxSpeed); 
             // Slow down as it approaches threshold
         }
 
@@ -144,9 +153,25 @@ void turn90Degrees(int direction){
             // counterclockwise if theta is positive
             setDirection (1, speed);
         }
+        stopMotors();
         
     }
-      stopMotors();
+
+
+ 
+}
+
+void navigateMission(){
+    float currentY = Enes100.getY();
+    
+    if(currentY < 1){ //upper starting position
+        rotateOV(); 
+        turn90Degrees(2);
+       
+    }else{ //lower starting position
+        rotateOTV();
+        turn90Degrees(1);
+    }
 }
 
 
