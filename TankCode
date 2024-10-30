@@ -35,9 +35,9 @@ void updateCoords()
 
 void rotateOTV() {
     // Set a maximum speed for the motors
-    const int maxSpeed = 200;
+    const int maxSpeed = 150;
     // Threshold for stopping (3 degrees in radians)
-    const float threshold = .1; 
+    const float threshold = .3; 
     
     // Continue rotating until theta is within the specified range
     while (fabs(Enes100.getTheta()) > threshold) {
@@ -49,9 +49,9 @@ void rotateOTV() {
         int speed = maxSpeed;
 
         // Adjust the speed based on the angle's proximity to zero
-        if (fabs(currentTheta) < 0.1) {
+        if (fabs(currentTheta) < 0.3) {
             //map(int x, int in_min, int in_max, int out_min, int out_max)
-            speed = map(fabs(currentTheta), 0.1, 0.5, 100, maxSpeed); 
+            speed = map(fabs(currentTheta), 0.3, 0.5, 50, maxSpeed); 
             // Slow down as it approaches threshold
         }
 
@@ -72,10 +72,10 @@ void rotateOTV() {
 
 void moveOTVTill(float distance){
     //Moves Tank till x values reach target within threshold of .3
-    while(Enes100.getX() < (distance-.3)){
+    while(Enes100.getX() < (distance-.3) && Enes100.getX() < (distance + .5)){
         setDirection(0, 200);
         delay(1000);
-        stopMotors();
+        //stopMotors();
 
     }
 }
