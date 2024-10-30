@@ -144,12 +144,9 @@ void turn90Degrees(int direction){
             // counterclockwise if theta is positive
             setDirection (1, speed);
         }
-
-        stopMotors();
         
     }
-
- 
+      stopMotors();
 }
 
 
