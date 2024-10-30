@@ -91,11 +91,29 @@ void moveTillX(float xCord){
 }
 void moveTillY(float yCord){
     //Moves Tank till y values reach target within threshold of .3
-    while(fabs(Enes100.getY() - yCord) < 0.3){
-        setDirection(0, 200);
-        delay(1000);
-        stopMotors();
+    Enes100.println("MoveTill");
+    float currentY = Enes100.getY();
+    while (fabs(currentY - yCord) > 0.1) {
+        currentY = Enes100.getY();
+
+        // Calculate the difference
+        float distance = yCord - currentY;
+
+        // Calculate speed (you can customize this)
+        int maxSpeed = 100;
+        int speed = maxSpeed;
+
+        // Optional: Adjust speed based on how close you are to the target
+        if (fabs(distance) < 0.2) {
+            speed = map(fabs(distance), 0.0, 0.2, 50, maxSpeed);
+        }
+        setDirection(0, speed);
+        // Optional: Add a small delay to allow the motors to react
+        delay(10);
     }
+
+    // Stop the motors once the target x coordinate is reached
+    stopMotors();
 }
 
 
