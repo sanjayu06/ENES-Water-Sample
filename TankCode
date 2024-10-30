@@ -1,0 +1,110 @@
+#include <math.h>
+#include "Arduino.h"
+#include "Enes100.h"
+#include "Tank.h"
+
+
+
+
+void setup() {
+    Enes100.begin("Project Kowalski", WATER, 249,50, 51);
+    Tank.begin();
+    
+    Enes100.println("Starting driving");
+    rotateOTV();
+}
+
+void loop() {
+    delay(100);
+    updateCoords();
+    moveOTVTill(3.5);
+    //break;
+}
+
+void updateCoords()
+{
+
+    Enes100.print("X = "); Enes100.println(Enes100.getX());
+    Enes100.print("Y = "); Enes100.println(Enes100.getY());
+    Enes100.print("Theta = "); Enes100.println(Enes100.getTheta());
+    
+  
+
+}
+
+
+void rotateOTV() {
+    // Set a maximum speed for the motors
+    const int maxSpeed = 200;
+    // Threshold for stopping (3 degrees in radians)
+    const float threshold = .1; 
+    
+    // Continue rotating until theta is within the specified range
+    while (fabs(Enes100.getTheta()) > threshold) {
+        updateCoords ();
+        // Get the current theta
+        float currentTheta = Enes100.getTheta();
+    
+        // Calculate the speed based on how close we are to zero
+        int speed = maxSpeed;
+
+        // Adjust the speed based on the angle's proximity to zero
+        if (fabs(currentTheta) < 0.1) {
+            //map(int x, int in_min, int in_max, int out_min, int out_max)
+            speed = map(fabs(currentTheta), 0.1, 0.5, 100, maxSpeed); 
+            // Slow down as it approaches threshold
+        }
+
+        // Control the motor direction and speed
+        if (currentTheta < 0) {
+            // clockwise if theta is negative
+            setDirection(2, speed);
+        } else {
+            // counterclockwise if theta is positive
+            setDirection (1, speed);
+        }
+        //Motors need to stop to check thetha
+        stopMotors();
+    }
+
+
+}
+
+void moveOTVTill(float distance){
+    //Moves Tank till x values reach target within threshold of .3
+    while(Enes100.getX() < (distance-.3)){
+        setDirection(0, 200);
+        delay(1000);
+        stopMotors();
+
+    }
+}
+
+
+void moveOTV(int time, int direction){
+    setDirection(direction, 255);
+    delay(time);
+    stopMotors();
+}
+
+void stopMotors(){
+    //setLeftMotorPWM
+    Tank.setLeftMotorPWM(0);
+    Tank.setRightMotorPWM(0);
+    //setRightMotorPWM
+}
+
+
+void setDirection(int motors, int power) {
+    if (motors == 0){
+        Tank.setLeftMotorPWM(power);
+        Tank.setRightMotorPWM(power);
+    }else if (motors == 1){//turn left
+        Tank.setLeftMotorPWM(power);
+        Tank.setRightMotorPWM(-power);
+    }else if (motors == 2){//turn right
+        Tank.setLeftMotorPWM(-power);
+        Tank.setRightMotorPWM(power);
+    }
+
+}
