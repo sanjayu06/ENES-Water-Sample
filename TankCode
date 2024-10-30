@@ -10,8 +10,11 @@ void setup() {
     Enes100.begin("Project Kowalski", WATER, 249,50, 51);
     Tank.begin();
     
-    Enes100.println("Starting driving");
+    Enes100.println("Starting directions towards landing zone");
     rotateOTV();
+    
+    Enes100.println("Starting 90 degree turns");
+    turn90Degrees(1);
 }
 
 void loop() {
@@ -93,6 +96,50 @@ void stopMotors(){
     Tank.setRightMotorPWM(0);
     //setRightMotorPWM
 }
+
+void turn90Degrees(int direction){
+    //should pass in 1 (left) or 2 (right)
+    float target;
+    float currentTheta = Enes100.getTheta();
+    
+    if(direction == 1){
+        target = Enes100.getTheta() + (PI/2);
+    }else if (direction == 2){
+        target = Enes100.getTheta() - (PI/2);
+    }
+    
+    while (fabs(Enes100.getTheta()-target) > .3) {
+        updateCoords ();
+        currentTheta = Enes100.getTheta();
+    
+        // Calculate the speed based on how close we are to zero
+        int maxSpeed = 100;
+        int speed = maxSpeed;
+
+        // Adjust the speed based on the angle's proximity to zero
+        if (fabs(currentTheta-target) <  (0.3)) {
+            //map(int x, int in_min, int in_max, int out_min, int out_max)
+            
+            speed = map(fabs(currentTheta - target), 0, .3, 20, maxSpeed); 
+            // Slow down as it approaches threshold
+        }
+
+        // Control the motor direction and speed
+        if (direction == 1) {
+            // clockwise if theta is negative
+            setDirection(1, speed);
+        } else {
+            // counterclockwise if theta is positive
+            setDirection (2, speed);
+        }
+
+        delay (50);
+        
+    }
+    stopMotors();
+ 
+}
+
 
 
 void setDirection(int motors, int power) {
