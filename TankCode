@@ -53,7 +53,7 @@ void updateDirection()
     delay(1000);
 }
 
-void testNav()
+void distSense()
 {
  
     float currentDistance = Tank.readDistanceSensor(1);
@@ -123,7 +123,7 @@ void moveTillX(float xCord){
         stopMotors();
         
         if(Tank.readDistanceSensor(1) > .2 && Tank.readDistanceSensor(1) != -1){
-            testNav();
+            distSense();
         }
     }
 }
