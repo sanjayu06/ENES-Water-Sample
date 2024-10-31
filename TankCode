@@ -112,7 +112,7 @@ void rotateOTV() {
         //Motors need to stop to check thetha
         stopMotors();
     }
-
+}
 
 void moveTillX(float xCord){
     //Moves Tank till x values reach target within threshold of .3
