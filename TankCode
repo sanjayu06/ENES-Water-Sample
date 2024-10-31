@@ -11,26 +11,29 @@ void setup() {
     
     Enes100.println("Starting directions towards landing zone");
     //rotateOTV();
+    // moveTillX(3.2);
     
     // Enes100.println("Starting 90 degree turns");
     
     // Enes100.println("Turn 1");
-    // turn90Degrees(1);
+    // turn90Degrees(2);
     
     // Enes100.println("Turn 2");
-    // turn90Degrees(1);
+    // turn90Degrees(2);
     
     // Enes100.println("Turn 3");
-    // turn90Degrees(1);
+    // turn90Degrees(2);
     
-    Enes100.println("Start Moving Towards Mission Site");
+    // Enes100.println("Start Moving Towards Mission Site");
+    // turn90Degrees(1);
+    //moveTillY(1.8);
     navigateMission();
 }
 
 void loop() {
     delay(100);
     updateCoords();
-    moveTillX(3);
+    //moveTillX(3.2);
     //break;
 }
 
@@ -60,7 +63,7 @@ void rotateOTV() {
         int speed = maxSpeed;
 
         // Adjust the speed based on the angle's proximity to zero
-        if (fabs(currentTheta) < threshold) {
+        if (fabs(currentTheta) < threshold + .2) {
             //map(int x, int in_min, int in_max, int out_min, int out_max)
             speed = map(fabs(currentTheta), threshold, 0.5, 50, maxSpeed); 
             // Slow down as it approaches threshold
@@ -83,10 +86,11 @@ void rotateOTV() {
 
 void moveTillX(float xCord){
     //Moves Tank till x values reach target within threshold of .3
-    while(fabs(Enes100.getX() - xCord) < 0.3){
-        setDirection(0, 200);
-        delay(100);
-        stopMotors();
+    while(fabs(Enes100.getX() - xCord) > 0.3){
+        // setDirection(0, 200);
+        // delay(1000);
+        // stopMotors();
+        moveOTV(50, 0);
     }
 }
 void moveTillY(float yCord){
@@ -128,6 +132,21 @@ void stopMotors(){
     Tank.setLeftMotorPWM(0);
     Tank.setRightMotorPWM(0);
     //setRightMotorPWM
+}
+// Constants
+const float MAX_TURN_SPEED = 255; // Maximum turn speed for motors
+const float THRESHOLD = 0.1;       // Angle threshold for stopping
+const float SOME_CONSTANT = 1.0;   // Proportional gain for turning
+
+// Constrain function
+float constrain(float value, float minValue, float maxValue) {
+    if (value < minValue) {
+        return minValue;
+    } else if (value > maxValue) {
+        return maxValue;
+    } else {
+        return value;
+    }
 }
 
 float normalizeTheta(float theta) {
@@ -192,24 +211,35 @@ void turn90Degrees(int direction){
  
 }
 
-
 void navigateMission(){
     float currentY = Enes100.getY();
     
-    if(currentY < 1){ //upper starting position
+    if(currentY < 1){ //lower starting position
         rotateOTV(); 
         turn90Degrees(1);
-        moveTillY (.55);
-    }else{ //lower starting position
+        moveTillY (1.5);
+        delay (1000);
+        turn90Degrees(2);
+        moveTillX(3.5);
+    }else{ //upper starting position
         rotateOTV();
         turn90Degrees(2);
-        moveTillY(1.45);
+        moveTillY(.55);
+        delay(1000);
+        turn90Degrees(1);
+        moveTillX(3.5);
     }
 }
 
 
 
 void setDirection(int motors, int power) {
+    if(power > 255){
+        power = 255;
+    }else if(power < -255){
+        power = -255;
+    }
+    
     if (motors == 0){
         Tank.setLeftMotorPWM(power);
         Tank.setRightMotorPWM(power);
