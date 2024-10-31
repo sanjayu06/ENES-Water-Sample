@@ -130,6 +130,17 @@ void stopMotors(){
     //setRightMotorPWM
 }
 
+float normalizeTheta(float theta) {
+    // Normalize theta to the range [-pi, pi]
+    while (theta > PI) {
+        theta -= 2 * PI;
+    }
+    while (theta < -PI) {
+        theta += 2 * PI;
+    }
+    return theta;
+}
+
 void turn90Degrees(int direction){
     //should pass in 1 (left) or 2 (right)
     float target;
@@ -137,15 +148,18 @@ void turn90Degrees(int direction){
     
     if(direction == 1){
         //determines 90 degree target theta left turn
-        target = Enes100.getTheta() + (PI/2);
+       target = normalizeTheta(currentTheta + (PI/2));
     }else if (direction == 2){
-        //detemines 90 degree target thetha right turn
-        target = Enes100.getTheta() - (PI/2);
+        //detemines 90 degree target theta right turn
+      target = normalizeTheta(currentTheta - (PI/2));
+    } else {
+        //Invalid direction, exit the function
+        return;
     }
     
-    //Enes100.println( target);
+    Enes100.println( target);
     
-    while (fabs(Enes100.getTheta() - target) > .2) {
+    while (fabs(normalizeTheta(Enes100.getTheta()) - target) > .5) {
         updateCoords ();
         currentTheta = Enes100.getTheta();
     
@@ -154,28 +168,30 @@ void turn90Degrees(int direction){
         int speed = maxSpeed;
 
         // Adjust the speed based on the angle's proximity to zero
-        if (fabs(Enes100.getTheta() - target) <  (0.2)) {
+        if (fabs (normalizeTheta(currentTheta-target)) <  0.5) {
             //map(int x, int in_min, int in_max, int out_min, int out_max)
             
-            speed = map(fabs(currentTheta - target), 0, .2, 20, maxSpeed); 
+            speed = map(fabs(currentTheta - target), 0, .5, 20, maxSpeed); 
             // Slow down as it approaches threshold
         }
 
         // Control the motor direction and speed
-        if (currentTheta < target) {
+        if (normalizeTheta(currentTheta - target) < 0) {
             // clockwise if theta is negative
             setDirection(2, speed);
         } else {
             // counterclockwise if theta is positive
             setDirection (1, speed);
         }
-        stopMotors();
+
+        delay(10);
+       
         
     }
-
-
+     stopMotors();
  
 }
+
 
 void navigateMission(){
     float currentY = Enes100.getY();
