@@ -31,9 +31,10 @@ void setup() {
 }
 
 void loop() {
-    delay(100);
+    delay(1000);
     updateCoords();
-    //moveTillX(3.2);
+    moveTillX(3);
+    updateDirection();
     //break;
 }
 
@@ -44,6 +45,37 @@ void updateCoords()
     Enes100.print("Y = "); Enes100.println(Enes100.getY());
     Enes100.print("Theta = "); Enes100.println(Enes100.getTheta());
 
+}
+
+void updateDirection()
+{
+    Enes100.print("Distance Reading: "); Enes100.println(Tank.readDistanceSensor(1));
+    delay(1000);
+}
+
+void testNav()
+{
+ 
+    float currentDistance = Tank.readDistanceSensor(1);
+    Enes100.println(Tank.readDistanceSensor(1));
+    
+      currentDistance = Tank.readDistanceSensor(1);        
+        
+        if (currentDistance < .3) {
+            if (Enes100.getY() < 1) {
+                turn90Degrees(1);
+                moveTillY(1.45);
+                turn90Degrees(2);
+                delay(100);
+                
+            } else {
+                turn90Degrees(2);
+                moveTillY(.55);
+                turn90Degrees(1);
+                delay(100);
+                
+            }   
+      }   
 }
 
 
@@ -82,17 +114,20 @@ void rotateOTV() {
     }
 
 
-}
-
 void moveTillX(float xCord){
     //Moves Tank till x values reach target within threshold of .3
     while(fabs(Enes100.getX() - xCord) > 0.3){
-        // setDirection(0, 200);
-        // delay(1000);
-        // stopMotors();
-        moveOTV(50, 0);
+        Enes100.println("Reached");
+        setDirection(0, 200);
+        delay(100);
+        stopMotors();
+        
+        if(Tank.readDistanceSensor(1) > .2 && Tank.readDistanceSensor(1) != -1){
+            testNav();
+        }
     }
 }
+
 void moveTillY(float yCord){
     //Moves Tank till y values reach target within threshold of .3
     Enes100.println("MoveTill");
@@ -125,6 +160,11 @@ void moveOTV(int time, int direction){
     setDirection(direction, 255);
     delay(time);
     stopMotors();
+}
+
+void moveObstacle(int time, int direction){
+     moveTillX(3.5);
+     stopMotors();
 }
 
 void stopMotors(){
