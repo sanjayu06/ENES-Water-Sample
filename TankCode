@@ -110,8 +110,9 @@ void rotateOTV() {
             setDirection (1, speed);
         }
         //Motors need to stop to check thetha
-        stopMotors();
+        delay(100);
     }
+    stopMotors();
 }
 
 void moveTillX(float xCord){
@@ -125,6 +126,11 @@ void moveTillX(float xCord){
         if(Tank.readDistanceSensor(1) > .2 && Tank.readDistanceSensor(1) != -1){
             distSense();
         }
+    }
+    if(Enes100.getY() < 1.1){
+            turn90Degrees(1);
+            moveTillY(1.45);
+            turn90Degrees(2);
     }
 }
 
