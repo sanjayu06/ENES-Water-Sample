@@ -8,8 +8,9 @@ const int EN_B = 12;//speed
 const int IN1_B = 24; //direction
 const int IN2_B = 25; //direction
 
+
 void loop(){
-  
+  setDirection(true, 0);
 }
 
 void moveOTV (int time, bool forward){
