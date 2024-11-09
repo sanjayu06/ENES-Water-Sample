@@ -1,1 +1,6 @@
+//vcc pins for power
+//
 
+//define pins (pin numbers need to be changed)
+const int s0 = 2;
+const int s1 = 3;
