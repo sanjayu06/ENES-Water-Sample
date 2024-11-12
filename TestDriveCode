@@ -170,8 +170,13 @@ void moveTillX(float xCord){
         delay(100);
         stopMotors();
         
-        if(Tank.readDistanceSensor(1) > .2 && Tank.readDistanceSensor(1) != -1){
+        if(Tank.readDistanceSensor(1) < .2 && Tank.readDistanceSensor(1) != -1){
             distSense();
+            ++count;
+            if(count<=2){
+                moveCenter();
+                count==0;
+            }
         }
     }
     if(Enes100.getY() < 1.1){
