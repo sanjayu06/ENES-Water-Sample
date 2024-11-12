@@ -170,14 +170,17 @@ void moveTillX(float xCord){
         delay(100);
         stopMotors();
         
-        if(Tank.readDistanceSensor(1) < .2 && Tank.readDistanceSensor(1) != -1){
+        int count = 0;
+        if(Tank.readDistanceSensor(1) > .2 && Tank.readDistanceSensor(1) != -1){
             distSense();
             ++count;
-            if(count<=2){
-                moveCenter();
-                count==0;
+            if(count <= 2){
+              moveCenter();
+              count == 0l
             }
         }
+
+
     }
     if(Enes100.getY() < 1.1){
             turn90Degrees(1);
@@ -200,7 +203,7 @@ void moveCenter(){
          delay(100);
                 
         }   
-} 
+}
 
 void moveTillY(float yCord){
     //Moves Tank till y values reach target within threshold of .3
@@ -297,7 +300,7 @@ void turn90Degrees(int direction){
         currentTheta = Enes100.getTheta();
     
         // Calculate the speed based on how close we are to zero
-        int maxSpeed = 100;
+        int maxSpeed = 160;
         int speed = maxSpeed;
 
         // Adjust the speed based on the angle's proximity to zero
@@ -354,21 +357,37 @@ void navigateMission(){
 
 
 void setDirection(int motors, int power) {
-    if(power > 255){
-        power = 255;
-    }else if(power < -255){
-        power = -255;
+    if(power > 150){
+        power = 150;
+    }else if(power < -150){
+        power = -150;
     }
     
-    if (motors == 0){
-        Tank.setLeftMotorPWM(power);
-        Tank.setRightMotorPWM(power);
+    if (motors == 0){//straight
+        analogWrite(EN_A, 75);
+        analogWrite(EN_B, 75);
+
+        digitalWrite(IN1_A, LOW);
+        digitalWrite(IN2_A, HIGH);
     }else if (motors == 1){//turn left
-        Tank.setLeftMotorPWM(power);
-        Tank.setRightMotorPWM(-power);
+        analogWrite(EN_A, power);
+        analogWrite(EN_B, power);
+
+        digitalWrite(IN1_A, HIGH);
+        digitalWrite(IN2_A, LOW);
+
+        digitalWrite(IN1_B, HIGH);
+        digitalWrite(IN2_B, LOW);
+       
     }else if (motors == 2){//turn right
-        Tank.setLeftMotorPWM(-power);
-        Tank.setRightMotorPWM(power);
+        analogWrite(EN_A, power);
+        analogWrite(EN_B, power);
+
+        digitalWrite(IN1_A, HIGH);
+        digitalWrite(IN2_A, LOW);
+
+        digitalWrite(IN1_B, HIGH);
+        digitalWrite(IN2_B, LOW);
     }
 
 }
