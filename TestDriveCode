@@ -1,17 +1,28 @@
 #include <math.h>
 #include "Arduino.h"
 #include "Enes100.h"
-#include "Tank.h"
 
 //Assigning Pins Left Motor (A) 
-const int EN_A = 11;//speed
-const int IN1_A = 22; //direction
-const int IN2_A = 23; //direction
+const int EN_A = 10;//speed
+const int IN1_A = 52; //direction
+const int IN2_A = 53; //direction
 
 //Assigning Pins Right Motor (B)
-const int EN_B = 12;//speed
-const int IN1_B = 24; //direction
-const int IN2_B = 25; //direction
+const int EN_B = 11;//speed
+const int IN1_B = 51; //direction
+const int IN2_B = 50; //direction
+
+//Assigning Ultrasonic Pins
+// defines pins numbers
+const int trigPinA = 7;
+const int echoPinA = 8;
+
+const int trigPinB = 5;
+const int echoPinB = 6;
+
+// defines variables
+long duration;
+int distance;
 
 
 void setup() {
@@ -24,8 +35,13 @@ void setup() {
     pinMode(IN1_B, OUTPUT);
     pinMode(IN2_B, OUTPUT);
 
-    Enes100.begin("Project Kowalski", WATER, 19, 52, 50);
-    Tank.begin();
+    pinMode(trigPinA, OUTPUT); // Sets the trigPin as an Output
+    pinMode(echoPinA, INPUT); // Sets the echoPin as an Input
+
+    pinMode(trigPinB, OUTPUT); // Sets the trigPin as an Output
+    pinMode(echoPinB, INPUT); // Sets the echoPin as an Input
+
+    Enes100.begin("Project Kowalski", WATER, 249, 53, 52);
     
     Enes100.println("Starting directions towards landing zone");
     navigateMission();
@@ -35,48 +51,69 @@ void loop() {
     delay(1000);
     updateCoords();
     moveTillX(3);
-    updateDirection();
     //break;
 }
 
 void updateCoords()
 {
-  Enes100.print("X = "); Enes100.println(Enes100.getX());
-  Enes100.print("Y = "); Enes100.println(Enes100.getY());
-  Enes100.print("Theta = "); Enes100.println(Enes100.getTheta());
 
+  float x, y, theta; boolean v;
+
+  x = Enes100.getX();
+  y = Enes100.getY();
+  theta = Enes100.getTheta();
+  v = Enes100.isVisible();
+  
+  if(v){
+    Enes100.print("X = "); Enes100.println(x);
+    Enes100.print("Y = "); Enes100.println(y);
+    Enes100.print("Theta = "); Enes100.println(theta);
+  }else{
+    Enes100.println("Not Found");
+  }
+  
 }
 
-void updateDirection()
-{
-    Enes100.print("Distance Reading: "); 
-    Enes100.println(Tank.readDistanceSensor(1));
-    delay(1000);
+
+float measureDistance(int trigPin, int echoPin){
+  digitalWrite(trigPin, LOW);
+  delay(2);
+  digitalWrite(trigPin, HIGH);
+  delay(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read the echo pin and calculate distance based on pulse duration
+  long duration = pulseIn(echoPin, HIGH);
+  float distance = duration * 0.034 / 2;  // Convert time to distance (in meters)
+  return distance;
 }
 
 void distSense()
 {
- 
-    float currentDistance = Tank.readDistanceSensor(1);
-    Enes100.println(Tank.readDistanceSensor(1));
-    
-      currentDistance = Tank.readDistanceSensor(1);        
-        
-        if (currentDistance < .3) {
-            if (Enes100.getY() < 1) {
-                turn90Degrees(1);
-                moveTillY(1.45);
-                turn90Degrees(2);
-                delay(100);
-                
-            } else {
-                turn90Degrees(2);
-                moveTillY(.55);
-                turn90Degrees(1);
-                delay(100);
-                
-            }   
-      }   
+  // Measure distances from both sensors
+    float distanceSensor1 = measureDistance(trigPinA, echoPinA);
+    float distanceSensor2 = measureDistance(trigPinB, echoPinB);
+
+    // Print distances to Enes100 for monitoring
+    Enes100.print("Sensor 1 Distance: ");
+    Enes100.println(distanceSensor1);
+    Enes100.print("Sensor 2 Distance: ");
+    Enes100.println(distanceSensor2);
+
+    // Set the logic based on the sensor readings
+    if (distanceSensor1 < 0.3 || distanceSensor2 < 0.3) {  // Trigger avoidance if either sensor detects an obstacle within 0.3m
+        if (Enes100.getY() < 1) {
+            turn90Degrees(1);
+            moveTillY(1.45);
+            turn90Degrees(2);
+            delay(100);
+        } else {
+            turn90Degrees(2);
+            moveTillY(0.55);
+            turn90Degrees(1);
+            delay(100);
+        }
+    }  
 }
 
 
@@ -143,7 +180,7 @@ void rotateToZero() {
         float controlOutputTheta = kP_theta * errorTheta + kI_theta * integralTheta + kD_theta * derivativeTheta;
 
         // Adjust speed based on control output and constrain to maxSpeed
-        int speed = constrain(fabs(controlOutputTheta), 50, 150);  // Set min speed of 50 for responsiveness
+        int speed = constrainAng(fabs(controlOutputTheta), 50, 150);  // Set min speed of 50 for responsiveness
 
         // Determine motor direction and set speed
         if (currentTheta < 0) {
@@ -170,22 +207,25 @@ void moveTillX(float xCord){
         delay(100);
         stopMotors();
         
+        float distanceSensor1 = measureDistance(trigPinA, echoPinA);
+        float distanceSensor2 = measureDistance(trigPinB, echoPinB);
+
         int count = 0;
-        if(Tank.readDistanceSensor(1) > .2 && Tank.readDistanceSensor(1) != -1){
+        if(distanceSensor1 < 0.3 || distanceSensor2 < 0.3){
             distSense();
             ++count;
             if(count <= 2){
               moveCenter();
-              count == 0l
+              count == 0;
             }
         }
 
 
     }
     if(Enes100.getY() < 1.1){
-            turn90Degrees(1);
-            moveTillY(1.45);
-            turn90Degrees(2);
+      turn90Degrees(1);
+      moveTillY(1.45);
+      turn90Degrees(2);
     }
 }
 
@@ -246,8 +286,14 @@ void moveObstacle(int time, int direction){
 
 void stopMotors(){
     //setLeftMotorPWM
-    Tank.setLeftMotorPWM(0);
-    Tank.setRightMotorPWM(0);
+    analogWrite(EN_A, 0);
+    analogWrite(EN_B, 0);
+
+    digitalWrite(IN1_A, LOW);
+    digitalWrite(IN2_A, LOW);
+
+    digitalWrite(IN1_B, LOW);
+    digitalWrite(IN2_B, LOW);
     //setRightMotorPWM
 }
 // Constants
@@ -256,7 +302,7 @@ const float THRESHOLD = 0.1;       // Angle threshold for stopping
 const float SOME_CONSTANT = 1.0;   // Proportional gain for turning
 
 // Constrain function
-float constrain(float value, float minValue, float maxValue) {
+const int constrainAng(float value, int minValue, int maxValue) {
     if (value < minValue) {
         return minValue;
     } else if (value > maxValue) {
@@ -417,7 +463,7 @@ void positionControl(float targetPos, char axis) {
     float controlOutput = kP * error + kI * integral + kD * derivative;
     
     // Convert control output to motor speeds
-    int speed = constrain(controlOutput, -255, 255);
+    int speed = constrainAng(controlOutput, -255, 255);
     setDirection(0, speed); // Move forward or backward to reach the target position
 
     // Stop motors if target is reached within a threshold
