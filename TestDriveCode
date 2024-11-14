@@ -4,13 +4,13 @@
 
 //Assigning Pins Left Motor (A) 
 const int EN_A = 10;//speed
-const int IN1_A = 52; //direction
-const int IN2_A = 53; //direction
+const int IN1_A = 48; //direction
+const int IN2_A = 49; //direction
 
 //Assigning Pins Right Motor (B)
 const int EN_B = 11;//speed
-const int IN1_B = 51; //direction
-const int IN2_B = 50; //direction
+const int IN1_B = 47; //direction
+const int IN2_B = 46; //direction
 
 //Assigning Ultrasonic Pins
 // defines pins numbers
