@@ -1,0 +1,58 @@
+// Define Trigger and Echo pins for each ultrasonic sensor
+const int trigPin1 = 7;
+const int echoPin1 = 8;
+const int trigPin2 = 9;
+const int echoPin2 = 10;
+
+// Function to measure distance for a given Trigger and Echo pin
+float measureDistance(int trigPin, int echoPin) {
+    // Send a 10µs pulse to trigger the ultrasonic sensor
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+
+    // Read the echo pin and calculate distance based on pulse duration
+    long duration = pulseIn(echoPin, HIGH);
+    float distance = duration * 0.034 / 2;  // Convert time to distance (in meters)
+    return distance;
+}
+
+void setup() {
+    // Set pin modes for ultrasonic sensors
+    pinMode(trigPin1, OUTPUT);
+    pinMode(echoPin1, INPUT);
+    pinMode(trigPin2, OUTPUT);
+    pinMode(echoPin2, INPUT);
+    
+    // Initialize Enes100 (or other serial communication)
+    Enes100.begin(9600);
+}
+
+void distSense() {
+    // Measure distances from both sensors
+    float distanceSensor1 = measureDistance(trigPin1, echoPin1);
+    float distanceSensor2 = measureDistance(trigPin2, echoPin2);
+
+    // Print distances to Enes100 for monitoring
+    Enes100.print("Sensor 1 Distance: ");
+    Enes100.println(distanceSensor1);
+    Enes100.print("Sensor 2 Distance: ");
+    Enes100.println(distanceSensor2);
+
+    // Set the logic based on the sensor readings
+    if (distanceSensor1 < 0.3 || distanceSensor2 < 0.3) {  // Trigger avoidance if either sensor detects an obstacle within 0.3m
+        if (Enes100.getY() < 1) {
+            turn90Degrees(1);
+            moveTillY(1.45);
+            turn90Degrees(2);
+            delay(100);
+        } else {
+            turn90Degrees(2);
+            moveTillY(0.55);
+            turn90Degrees(1);
+            delay(100);
+        }
+    }   
+}
