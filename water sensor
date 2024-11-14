@@ -28,8 +28,7 @@ void loop() {
     Serial.println(value);
   }
   else if(value>610){
-    Serial.println("Motor level: 30mm");
+    Serial.println("Motor level: 40mm");
     Serial.println(value);
-    break;
   }
 }
