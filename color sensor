@@ -3,11 +3,11 @@
 
 
 // define pins(These need to be changed)
-const int S0 = 2;
-const int S1 = 3;
-const int S2 = 4;
-const int S3 = 5;
-const int signal = 6;
+const int S0 = 5;
+const int S1 = 6;
+const int S2 = 10;
+const int S3 = 9;
+const int signal = 11;
 // note - sensor LED pin is hardwired to 5V. You can use
 // an I/O pin to turn the white LEDs on and off instead, but a single
 // I/O pin cannot provide enough current for all four LEDs at full brightness.
